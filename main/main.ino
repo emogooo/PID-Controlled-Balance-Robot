@@ -8,7 +8,6 @@
 #endif
 
 #define MIN_ABS_SPEED 20 //motorları sürerken kullanılacak hız değişkeni
-
 MPU6050 mpu;
 
 // MPU kontrolü için değişkenleri tanımlıyoruz
@@ -18,27 +17,17 @@ uint8_t devStatus; // cihazın çalışma durumu bilgisi (0 = başarılı, !0 = 
 uint16_t packetSize; // DMP paket boyutu (standardı 42 byte)
 uint16_t fifoCount; // FIFO stackteki tüm byteları sayıyor
 uint8_t fifoBuffer[64]; // FIFO hafıza kapasitesi
-
 // pozisyon/hareket değişkenleri
 Quaternion q; // [w, x, y, z] Dördeyleri saklayacak
 VectorFloat gravity; // [x, y, z] yerçekimi vektörü
 float ypr[3]; // [yaw, pitch, roll] yaw/pitch/roll eksen bilgisi
-
 //PID değişkenleri
 // setpoint kaç derecede düz durduğu. 1-2 derece farklı olabilir.
 double originalSetpoint = 184;   //175
 double setpoint = originalSetpoint;
 double movingAngleOffset = 0.1;
 double input, output;
-
-// bu sayılar her farklı robot için değişir siz de kendi katsayılarınızı deneme yanılma ile belirleyin
-float Kp = 0;   //40
-float Kd = 0;  //1.3
-float Ki = 0;   //160
-float toplam = 0;
-
 PID pid(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT);
-
 double motorSpeedFactorLeft = 0.6; //sağ ve sol motorun hangi hızla döneceği katsayıları aralarında //0,63
 //eşitsizlik olabilir.
 double motorSpeedFactorRight = 0.65;    //0,60
@@ -50,22 +39,22 @@ int IN3 = 9;    //8
 int IN4 = 8;    //9
 int ENB = 10;
 LMotorController motorController(ENA, IN1, IN2, ENB, IN3, IN4, motorSpeedFactorLeft, motorSpeedFactorRight);
-
 volatile bool mpuInterrupt = false; // MPU interrrupt pini HIGH olmuş mu ona bakıyor
+
 void dmpDataReady(){
   mpuInterrupt = true;
 }
-
 //////////////////////////POT PID AYAR///////////////////////////////
-
+// bu sayılar her farklı robot için değişir siz de kendi katsayılarınızı deneme yanılma ile belirleyin
+float Kp = 0;   //40
+float Kd = 0;  //1.3
+float Ki = 0;   //160
 float multiplierP = 0.5;
 float multiplierI = 1;
 float multiplierD = 0.03125;
-
 float lastP = 0;
 float lastI = 0;
 float lastD = 0;
-
 bool flag;
 
 bool pid_ayar(){ // Potansiyometrelerde ölü bölge 1 / 1024
@@ -73,11 +62,9 @@ bool pid_ayar(){ // Potansiyometrelerde ölü bölge 1 / 1024
   Kp = analogRead(A0) * multiplierP;
   Ki = analogRead(A1) * multiplierI;
   Kd = analogRead(A2) * multiplierD;
-
   if(abs(lastP - Kp) > multiplierP || abs(lastI - Ki) > multiplierI || abs(lastD - Kd) > multiplierD){
     flag = true;
   }
-  
   if(abs(lastP - Kp) <= multiplierP){
     Kp = lastP;
   }
@@ -87,7 +74,6 @@ bool pid_ayar(){ // Potansiyometrelerde ölü bölge 1 / 1024
   if(abs(lastD - Kd) <= multiplierD){
     Kd = lastD;
   }
-
   if(flag){
     lastP = Kp;
     lastI = Ki;
@@ -142,7 +128,6 @@ void setup()
     Serial.println(F(")"));
   }
 }
-
 
 void loop()
 {
