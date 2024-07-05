@@ -5,4 +5,4 @@ This project involves the creation of a balance robot using an Arduino microcont
 > [!TIP]
 > Click the image for video.
 
-[![Watch](https://img.youtube.com/vi/zsryH5EAvOo/maxresdefault.jpg)](https://youtu.be/zsryH5EAvOo)
+[![Watch](https://img.youtube.com/vi/qx2WpSd9-G8/maxresdefault.jpg)](https://youtu.be/qx2WpSd9-G8)
